@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-LABEL="com.michi-context-v2.daemon"
+LABEL="com.michigram.daemon"
 PLIST_PATH="$HOME/Library/LaunchAgents/${LABEL}.plist"
-MICHI_BIN=$(command -v michi-context-v2 2>/dev/null || echo "")
+MICHI_BIN=$(command -v michigram 2>/dev/null || echo "")
 
 if [ -z "$MICHI_BIN" ]; then
-    echo "Error: michi-context-v2 not found. Install with: pip install -e /path/to/michi-context-v2"
+    echo "Error: michigram not found. Install with: pip install -e /path/to/michigram"
     exit 1
 fi
 
-LOG_DIR="$HOME/.michi-context-v2/logs"
+LOG_DIR="$HOME/.michigram/logs"
 mkdir -p "$LOG_DIR"
 
 cat > "$PLIST_PATH" << PLIST

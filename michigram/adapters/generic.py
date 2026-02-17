@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from michi_context_v2.adapters.base import AgentAdapter
-from michi_context_v2.afs.namespace import Namespace
-from michi_context_v2.afs.node import ContextNode, NodeType, NodeMetadata
-from michi_context_v2.core.primitives import now_iso, estimate_tokens, sha256_short
-from michi_context_v2.pipeline.constructor import ContextManifest
+from michigram.adapters.base import AgentAdapter
+from michigram.afs.namespace import Namespace
+from michigram.afs.node import ContextNode, NodeType, NodeMetadata
+from michigram.core.primitives import now_iso, estimate_tokens, sha256_short
+from michigram.pipeline.constructor import ContextManifest
 
 
 class GenericAdapter(AgentAdapter):

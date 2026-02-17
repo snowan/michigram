@@ -1,9 +1,9 @@
 import pytest
-from michi_context_v2.afs.namespace import Namespace
-from michi_context_v2.afs.mount import FilesystemMount
-from michi_context_v2.storage.filesystem import FilesystemBackend
-from michi_context_v2.afs.node import ContextNode, NodeType, NodeMetadata
-from michi_context_v2.core.primitives import now_iso
+from michigram.afs.namespace import Namespace
+from michigram.afs.mount import FilesystemMount
+from michigram.storage.filesystem import FilesystemBackend
+from michigram.afs.node import ContextNode, NodeType, NodeMetadata
+from michigram.core.primitives import now_iso
 
 
 def _make_ns(tmp_path):

@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import re
 
-from michi_context_v2.afs.node import ContextNode
-from michi_context_v2.core.primitives import sha256_short
-from michi_context_v2.repository.history import HistoryRepository
-from michi_context_v2.repository.memory import MemoryRepository, MemoryType
+from michigram.afs.node import ContextNode
+from michigram.core.primitives import sha256_short
+from michigram.repository.history import HistoryRepository
+from michigram.repository.memory import MemoryRepository, MemoryType
 
 
 class ContextEvaluator:

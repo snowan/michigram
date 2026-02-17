@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from michi_context_v2.afs.node import ContextNode
-from michi_context_v2.repository.history import HistoryRepository
-from michi_context_v2.repository.memory import MemoryRepository, MemoryType
+from michigram.afs.node import ContextNode
+from michigram.repository.history import HistoryRepository
+from michigram.repository.memory import MemoryRepository, MemoryType
 
 
 @dataclass

@@ -2,10 +2,10 @@
 set -euo pipefail
 
 SETTINGS_FILE="$HOME/.claude/settings.json"
-HOOK_CMD="michi-context-v2 inject --project \$CWD --adapter claude-code"
+HOOK_CMD="michigram inject --project \$CWD --adapter claude-code"
 
-if ! command -v michi-context-v2 &>/dev/null; then
-    echo "Error: michi-context-v2 not found. Install with: pip install -e /path/to/michi-context-v2"
+if ! command -v michigram &>/dev/null; then
+    echo "Error: michigram not found. Install with: pip install -e /path/to/michigram"
     exit 1
 fi
 
@@ -18,7 +18,7 @@ if [ ! -f "$SETTINGS_FILE" ]; then
     "SessionStart": [
       {
         "type": "command",
-        "command": "michi-context-v2 inject --project $CWD --adapter claude-code"
+        "command": "michigram inject --project $CWD --adapter claude-code"
       }
     ]
   }
@@ -28,7 +28,7 @@ SETTINGS
     exit 0
 fi
 
-if grep -q "michi-context-v2" "$SETTINGS_FILE" 2>/dev/null; then
+if grep -q "michigram" "$SETTINGS_FILE" 2>/dev/null; then
     echo "Hook already installed in $SETTINGS_FILE"
     exit 0
 fi
@@ -44,7 +44,7 @@ session_hooks = hooks.setdefault('SessionStart', [])
 
 session_hooks.append({
     'type': 'command',
-    'command': 'michi-context-v2 inject --project \$CWD --adapter claude-code'
+    'command': 'michigram inject --project \$CWD --adapter claude-code'
 })
 
 with open('$SETTINGS_FILE', 'w') as f:

@@ -1,9 +1,9 @@
-from michi_context_v2.afs.namespace import Namespace
-from michi_context_v2.afs.mount import FilesystemMount
-from michi_context_v2.storage.filesystem import FilesystemBackend
-from michi_context_v2.adapters.generic import GenericAdapter
-from michi_context_v2.pipeline.constructor import ContextManifest
-from michi_context_v2.afs.node import ContextNode, NodeType, NodeMetadata
+from michigram.afs.namespace import Namespace
+from michigram.afs.mount import FilesystemMount
+from michigram.storage.filesystem import FilesystemBackend
+from michigram.adapters.generic import GenericAdapter
+from michigram.pipeline.constructor import ContextManifest
+from michigram.afs.node import ContextNode, NodeType, NodeMetadata
 
 
 def _setup(tmp_path):

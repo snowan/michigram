@@ -1,4 +1,4 @@
-from michi_context_v2.afs.node import (
+from michigram.afs.node import (
     ContextNode, NodeType, NodeMetadata, node_to_dict, node_from_dict,
 )
 

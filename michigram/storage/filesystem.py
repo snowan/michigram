@@ -1,9 +1,9 @@
 from __future__ import annotations
 import json
 from pathlib import Path
-from michi_context_v2.afs.node import ContextNode, NodeType, NodeMetadata, node_to_dict, node_from_dict
-from michi_context_v2.core.primitives import atomic_write
-from michi_context_v2.storage.base import StorageBackend
+from michigram.afs.node import ContextNode, NodeType, NodeMetadata, node_to_dict, node_from_dict
+from michigram.core.primitives import atomic_write
+from michigram.storage.base import StorageBackend
 
 class FilesystemBackend(StorageBackend):
     def __init__(self, root: Path) -> None:

@@ -1,9 +1,9 @@
-from michi_context_v2.afs.namespace import Namespace
-from michi_context_v2.afs.mount import FilesystemMount
-from michi_context_v2.storage.filesystem import FilesystemBackend
-from michi_context_v2.repository.history import HistoryRepository
-from michi_context_v2.repository.memory import MemoryRepository, MemoryType
-from michi_context_v2.pipeline.evaluator import ContextEvaluator
+from michigram.afs.namespace import Namespace
+from michigram.afs.mount import FilesystemMount
+from michigram.storage.filesystem import FilesystemBackend
+from michigram.repository.history import HistoryRepository
+from michigram.repository.memory import MemoryRepository, MemoryType
+from michigram.pipeline.evaluator import ContextEvaluator
 
 
 def _setup(tmp_path):
@@ -92,7 +92,7 @@ def test_evaluate_extracts_file_paths(tmp_path, real_schema_jsonl):
 def test_dedup_file_patterns(tmp_path):
     """Different orderings of same files should produce same hash."""
     evaluator, history, memory = _setup(tmp_path)
-    from michi_context_v2.pipeline.evaluator import ContextEvaluator
+    from michigram.pipeline.evaluator import ContextEvaluator
 
     content_a = "## File Operations\n- Read: /a.py\n- Write: /b.py\n- Read: /a.py\n"
     content_b = "## File Operations\n- Write: /b.py\n- Read: /a.py\n"

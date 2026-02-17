@@ -4,7 +4,7 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
-DEFAULT_BASE_DIR = Path.home() / ".michi-context-v2"
+DEFAULT_BASE_DIR = Path.home() / ".michigram"
 
 
 @dataclass
@@ -33,8 +33,8 @@ def load_config(config_path: Path | None = None) -> Config:
 
 
 _ADAPTER_REGISTRY: dict[str, str] = {
-    "claude-code": "michi_context_v2.adapters.claude_code:ClaudeCodeAdapter",
-    "generic": "michi_context_v2.adapters.generic:GenericAdapter",
+    "claude-code": "michigram.adapters.claude_code:ClaudeCodeAdapter",
+    "generic": "michigram.adapters.generic:GenericAdapter",
 }
 
 

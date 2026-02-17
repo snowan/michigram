@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from michi_context_v2.pipeline.constructor import ContextManifest
+from michigram.pipeline.constructor import ContextManifest
 
 
 class AgentAdapter(ABC):

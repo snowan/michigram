@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from michi_context_v2.afs.node import ContextNode
+from michigram.afs.node import ContextNode
 
 class StorageBackend(ABC):
     @abstractmethod

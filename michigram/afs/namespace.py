@@ -1,6 +1,6 @@
 from __future__ import annotations
-from michi_context_v2.afs.mount import MountPoint
-from michi_context_v2.afs.node import ContextNode
+from michigram.afs.mount import MountPoint
+from michigram.afs.node import ContextNode
 
 class Namespace:
     """Hierarchical namespace with mount points. Resolves paths via longest-prefix match."""

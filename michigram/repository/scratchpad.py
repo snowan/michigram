@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from michi_context_v2.afs.namespace import Namespace
-from michi_context_v2.afs.node import ContextNode, NodeType, NodeMetadata
-from michi_context_v2.core.primitives import now_iso, estimate_tokens
-from michi_context_v2.repository.memory import MemoryRepository, MemoryType
+from michigram.afs.namespace import Namespace
+from michigram.afs.node import ContextNode, NodeType, NodeMetadata
+from michigram.core.primitives import now_iso, estimate_tokens
+from michigram.repository.memory import MemoryRepository, MemoryType
 
 
 class ScratchpadRepository:

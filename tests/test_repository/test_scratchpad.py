@@ -1,9 +1,9 @@
 import time
-from michi_context_v2.afs.namespace import Namespace
-from michi_context_v2.afs.mount import FilesystemMount
-from michi_context_v2.storage.filesystem import FilesystemBackend
-from michi_context_v2.repository.scratchpad import ScratchpadRepository
-from michi_context_v2.repository.memory import MemoryRepository, MemoryType
+from michigram.afs.namespace import Namespace
+from michigram.afs.mount import FilesystemMount
+from michigram.storage.filesystem import FilesystemBackend
+from michigram.repository.scratchpad import ScratchpadRepository
+from michigram.repository.memory import MemoryRepository, MemoryType
 
 
 def _make_repos(tmp_path):
