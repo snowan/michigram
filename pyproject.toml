@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "michi-context-v2"
+version = "0.1.0"
+description = "Context engineering system — AFS-based context management for AI agents"
+requires-python = ">=3.10"
+
+[project.scripts]
+michi-context-v2 = "michi_context_v2.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
