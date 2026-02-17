@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from michi_context_v2.pipeline.constructor import ContextConstructor, ContextManifest
+from michigram.pipeline.constructor import ContextConstructor, ContextManifest
 
 
 class UpdateMode(Enum):

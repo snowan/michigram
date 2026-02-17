@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from michi_context_v2.afs.node import ContextNode
-from michi_context_v2.storage.base import StorageBackend
+from michigram.afs.node import ContextNode
+from michigram.storage.base import StorageBackend
 
 class MountPoint(ABC):
     @abstractmethod

@@ -3,9 +3,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from michi_context_v2.adapters.base import AgentAdapter
-from michi_context_v2.pipeline.constructor import ContextManifest
-from michi_context_v2.repository.history import HistoryRepository
+from michigram.adapters.base import AgentAdapter
+from michigram.pipeline.constructor import ContextManifest
+from michigram.repository.history import HistoryRepository
 
 
 class ClaudeCodeAdapter(AgentAdapter):

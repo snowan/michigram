@@ -1,5 +1,5 @@
 from pathlib import Path
-from michi_context_v2.core.primitives import atomic_write, now_iso, estimate_tokens, sha256_short
+from michigram.core.primitives import atomic_write, now_iso, estimate_tokens, sha256_short
 
 
 def test_atomic_write(tmp_path):

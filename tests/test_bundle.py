@@ -1,11 +1,11 @@
 from pathlib import Path
 
-from michi_context_v2.afs.mount import FilesystemMount
-from michi_context_v2.afs.namespace import Namespace
-from michi_context_v2.afs.node import ContextNode, NodeType, NodeMetadata
-from michi_context_v2.bundle import export_bundle, import_bundle
-from michi_context_v2.core.primitives import now_iso
-from michi_context_v2.storage.filesystem import FilesystemBackend
+from michigram.afs.mount import FilesystemMount
+from michigram.afs.namespace import Namespace
+from michigram.afs.node import ContextNode, NodeType, NodeMetadata
+from michigram.bundle import export_bundle, import_bundle
+from michigram.core.primitives import now_iso
+from michigram.storage.filesystem import FilesystemBackend
 
 
 def _make_ns(tmp_path, name="store"):

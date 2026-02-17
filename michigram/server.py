@@ -5,13 +5,13 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
 
-from michi_context_v2.afs.mount import FilesystemMount
-from michi_context_v2.afs.namespace import Namespace
-from michi_context_v2.core.config import Config, load_config
-from michi_context_v2.pipeline.constructor import ContextConstructor
-from michi_context_v2.repository.history import HistoryRepository
-from michi_context_v2.repository.memory import MemoryRepository, MemoryType
-from michi_context_v2.storage.filesystem import FilesystemBackend
+from michigram.afs.mount import FilesystemMount
+from michigram.afs.namespace import Namespace
+from michigram.core.config import Config, load_config
+from michigram.pipeline.constructor import ContextConstructor
+from michigram.repository.history import HistoryRepository
+from michigram.repository.memory import MemoryRepository, MemoryType
+from michigram.storage.filesystem import FilesystemBackend
 
 
 def _build_stack(config: Config):

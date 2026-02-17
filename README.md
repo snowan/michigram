@@ -1,80 +1,84 @@
-# michi-context-v2
+# michigram
 
-A context engineering system for AI coding agents. It captures session history, extracts knowledge across memory tiers, and injects relevant context back into the agent — all within token budget constraints.
+An implementation of the [Agentic File System (AFS)](https://arxiv.org/abs/2512.05470) paper — a context engineering system that gives AI coding agents persistent, structured memory across sessions.
 
-Built for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), with a pluggable adapter layer for other agents.
+> **"Everything is Context: Agentic File System Abstraction for Context Engineering"**
+> Xiwei Xu, Robert Mao, Quan Bai, Xuewu Gu, Yechao Li, Liming Zhu
+> [arXiv:2512.05470](https://arxiv.org/abs/2512.05470)
 
 ## The Problem
 
-AI coding agents lose context between sessions. Each new conversation starts from zero — the agent forgets what files it worked on, what errors it hit, what the project's tech stack is, and what patterns it learned. As sessions grow long, older context falls out of the window entirely.
+AI coding agents lose context between sessions. Every new conversation starts from zero — the agent forgets what files it modified, what errors it encountered, what the project's tech stack is, and what patterns it learned. As sessions grow long, older context falls out of the window entirely.
 
-**michi-context-v2** solves this by implementing a persistent, multi-tiered memory system that:
+This isn't a model problem. It's a **context engineering** problem — how systems capture, structure, and govern external knowledge, memory, tools, and human input to enable trustworthy reasoning.
 
-- **Captures** raw session logs automatically
-- **Evaluates** sessions to extract facts, patterns, and errors
-- **Stores** knowledge in appropriate memory tiers (facts, episodic, experiential, procedural, user preferences)
-- **Injects** the most relevant context at session start, within token budget
+## What This Project Does
 
-The result: agents that remember across sessions and get smarter over time.
+michigram implements the AFS paper's core idea: treat **everything as context** and manage it through a Unix-inspired file system abstraction. Just as Unix treats devices, pipes, and files through a uniform interface, AFS treats prompts, memories, session logs, and tool outputs as nodes in a virtual file system.
 
-## Conceptual Foundation
+The system:
 
-The memory architecture draws from cognitive psychology's multi-store model, adapted for AI agent workflows:
+1. **Captures** raw session logs from Claude Code
+2. **Evaluates** sessions to extract facts, patterns, and errors
+3. **Stores** knowledge across five memory tiers
+4. **Constructs** token-budgeted context manifests using scoring strategies
+5. **Injects** relevant context back into the agent at session start
 
-| Memory Tier | Analogy | What It Stores | Example |
-|-------------|---------|---------------|---------|
-| **Fact** | Semantic memory | Stable project knowledge | "Uses PostgreSQL", "Python 3.10" |
-| **Episodic** | Episodic memory | Specific events and errors | "ImportError: no module named foo" |
-| **Experiential** | Procedural memory | Learned workflows | "Modified files: src/auth.py, tests/test_auth.py" |
-| **Procedural** | Skill memory | Tool usage patterns | "Bash: pytest tests/ -v" |
-| **User** | Preferences | User-set configuration | "Always use async", "Prefer pytest over unittest" |
+## Paper Implementation
 
-Context selection uses **scoring strategies** (recency, relevance) and respects a configurable **token budget** to fit within the agent's context window.
+The paper defines three pipeline components. Here's how michigram maps to them:
 
-## Architecture
+| Paper Concept | Implementation | File |
+|--------------|----------------|------|
+| **Context Constructor** | Assembles context manifests with recency/relevance scoring, respects token budget | `pipeline/constructor.py` |
+| **Context Evaluator** | Extracts facts, patterns, errors from sessions; detects drift | `pipeline/evaluator.py` |
+| **Context Loader** | Ingests JSONL sessions, formats output for agent hooks | `adapters/claude_code.py` |
+| **AFS Namespace** | Virtual file system with mount points and longest-prefix routing | `afs/namespace.py` |
+| **AFS Nodes** | Immutable context units with metadata, tags, TTL, versioning | `afs/node.py` |
+| **Mount Points** | Pluggable storage backends behind a uniform interface | `afs/mount.py` |
+| **Persistent Memory** | Five-tier memory system (fact, episodic, experiential, procedural, user) | `repository/memory.py` |
+
+### Memory Tiers
+
+The paper advocates for structured memory categories inspired by cognitive psychology:
+
+| Tier | What It Stores | Example |
+|------|---------------|---------|
+| **Fact** | Stable project knowledge | "Uses PostgreSQL", "Python 3.10" |
+| **Episodic** | Specific events and errors | "ImportError: no module named foo" |
+| **Experiential** | Learned workflows and patterns | "Modified files: src/auth.py, tests/test_auth.py" |
+| **Procedural** | Tool usage and how-to knowledge | "Bash: pytest tests/ -v" |
+| **User** | Explicit preferences | "Always use async", "Prefer pytest" |
+
+### AFS Architecture
+
+The paper's key insight is that a file-system abstraction provides uniform mounting, metadata, and access control for heterogeneous context artifacts:
 
 ```
-┌──────────────────────────────────────────────────┐
-│                  CLI / HTTP Server                │
-├──────────────────────────────────────────────────┤
-│              Pipeline Layer                       │
-│  ┌──────────┐  ┌───────────┐  ┌────────────┐    │
-│  │Constructor│  │ Evaluator │  │  Updater   │    │
-│  │(build ctx)│  │(learn)    │  │(refresh)   │    │
-│  └──────────┘  └───────────┘  └────────────┘    │
-├──────────────────────────────────────────────────┤
-│              Repository Layer                     │
-│  ┌────────┐  ┌────────┐  ┌────────────┐         │
-│  │History │  │Memory  │  │Scratchpad  │         │
-│  └────────┘  └────────┘  └────────────┘         │
-├──────────────────────────────────────────────────┤
-│        Abstract File System (AFS)                 │
-│  ┌───────────┐  ┌──────────────┐                 │
-│  │ Namespace  │  │ Mount Points │                 │
-│  └───────────┘  └──────────────┘                 │
-├──────────────────────────────────────────────────┤
-│              Storage Backends                     │
-│  ┌────────────┐  ┌────────┐                      │
-│  │ Filesystem │  │ SQLite │                      │
-│  └────────────┘  └────────┘                      │
-└──────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│              CLI / HTTP Server                │
+├──────────────────────────────────────────────┤
+│  Constructor  │  Evaluator  │    Updater     │
+├──────────────────────────────────────────────┤
+│    History    │   Memory    │  Scratchpad    │
+├──────────────────────────────────────────────┤
+│        AFS (Namespace + Mount Points)        │
+├──────────────────────────────────────────────┤
+│       Filesystem    │       SQLite           │
+└──────────────────────────────────────────────┘
 ```
 
-All context is stored in a unified **Abstract File System (AFS)** — a virtual namespace with pluggable backends. This means you can switch between filesystem and SQLite storage without changing any application code.
+All context — sessions, memories, scratchpad notes — lives under a unified namespace (`/context/history/...`, `/context/memory/...`, `/context/scratchpad/...`). Storage backends are swappable without changing application code.
 
 ## Installation
 
 ```bash
-# Clone and install
 git clone https://github.com/snowan/michigram.git
 cd michigram
 pip install -e .
-
-# Verify
-michi-context-v2 --help
 ```
 
-**Requirements:** Python >= 3.10, no external dependencies.
+Requirements: Python >= 3.10, no external dependencies.
 
 ## Setup with Claude Code
 
@@ -84,7 +88,7 @@ michi-context-v2 --help
 ./scripts/install.sh
 ```
 
-This adds a hook to `~/.claude/settings.json` that automatically injects context when a Claude Code session starts:
+This registers a hook in `~/.claude/settings.json` that injects context automatically:
 
 ```json
 {
@@ -92,7 +96,7 @@ This adds a hook to `~/.claude/settings.json` that automatically injects context
     "SessionStart": [
       {
         "type": "command",
-        "command": "michi-context-v2 inject --project $CWD --adapter claude-code"
+        "command": "michigram inject --project $CWD --adapter claude-code"
       }
     ]
   }
@@ -105,109 +109,74 @@ This adds a hook to `~/.claude/settings.json` that automatically injects context
 ./scripts/install-launchd.sh
 ```
 
-This creates a macOS LaunchAgent that runs every 30 minutes to capture new sessions and learn from them automatically. Logs go to `~/.michi-context-v2/logs/daemon.log`.
+Creates a macOS LaunchAgent that captures and learns from sessions every 30 minutes.
 
 ## Usage
 
 ### Capture sessions
 
 ```bash
-# Auto-detect Claude Code sessions for a project
-michi-context-v2 capture --project /path/to/myproject --adapter claude-code
-
-# Ingest a specific JSONL file
-michi-context-v2 capture --project /path/to/myproject --adapter claude-code \
-  --input ~/.claude/projects/Users-me-code-myproject/session.jsonl
+michigram capture --project /path/to/myproject --adapter claude-code
 ```
 
 ### Learn from sessions
 
 ```bash
-# Extract facts, patterns, and errors from captured sessions
-michi-context-v2 learn --project /path/to/myproject
+michigram learn --project /path/to/myproject
 ```
 
 ### Inject context
 
 ```bash
-# Build and output context (used by the hook automatically)
-michi-context-v2 inject --project /path/to/myproject --strategy recency
+michigram inject --project /path/to/myproject --strategy recency
 ```
 
-Strategies:
-- `recency` — most recent items first (default)
-- `relevance` — prioritize facts > experiential > episodic
+Strategies: `recency` (most recent first, default), `relevance` (facts > experiential > episodic).
 
 ### Manage memory
 
 ```bash
-# Store a fact
-michi-context-v2 memory store --project /path/to/proj \
-  --type facts --key db --value "PostgreSQL 15"
+# Store
+michigram memory store --project /path/to/proj --type facts --key db --value "PostgreSQL 15"
 
-# Recall all facts
-michi-context-v2 memory recall --project /path/to/proj --type facts
+# Recall
+michigram memory recall --project /path/to/proj --type facts
 
-# Forget a memory
-michi-context-v2 memory forget --project /path/to/proj --type facts --key db
+# Forget
+michigram memory forget --project /path/to/proj --type facts --key db
 ```
 
 ### Run the daemon
 
 ```bash
-# Continuous capture + learn loop (every 30 minutes by default)
-michi-context-v2 daemon --interval 1800
+michigram daemon --interval 1800
 ```
 
 ### Explore the AFS
 
 ```bash
-# List the context tree
-michi-context-v2 afs ls /context
-
-# Read a specific session
-michi-context-v2 afs read /context/history/myproject/abc123
-
-# Search by tags
-michi-context-v2 afs search /context/memory --tags infra
+michigram afs ls /context
+michigram afs read /context/history/myproject/abc123
+michigram afs search /context/memory --tags infra
 ```
 
-### Prune old sessions
+### Other commands
 
 ```bash
-# Remove sessions older than 30 days
-michi-context-v2 prune --project /path/to/proj --max-age-days 30
+michigram prune --project /path/to/proj --max-age-days 30
+michigram serve --host 127.0.0.1 --port 8420
+michigram export --path /context --output backup.tar.gz
+michigram import --bundle backup.tar.gz --target /context
+michigram status
 ```
-
-### Export / Import
-
-```bash
-# Backup
-michi-context-v2 export --path /context --output context-backup.tar.gz
-
-# Restore
-michi-context-v2 import --bundle context-backup.tar.gz --target /context
-```
-
-### HTTP server
-
-```bash
-michi-context-v2 serve --host 127.0.0.1 --port 8420
-```
-
-Endpoints:
-- `GET /status` — health check
-- `GET /context/inject?project=X&strategy=recency` — context injection
-- `GET/POST/DELETE /context/memory/{project}/{type}/{key}` — memory CRUD
-- `GET /context/afs/{path}` — AFS navigation
 
 ## Configuration
 
-Config lives at `~/.michi-context-v2/config.json`:
+Config file: `~/.michigram/config.json`
 
 ```json
 {
-  "base_dir": "~/.michi-context-v2",
+  "base_dir": "~/.michigram",
   "default_backend": "filesystem",
   "token_budget": 8000,
   "default_adapter": "claude-code",
@@ -218,14 +187,12 @@ Config lives at `~/.michi-context-v2/config.json`:
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `base_dir` | `~/.michi-context-v2` | Root directory for all data |
+| `base_dir` | `~/.michigram` | Root directory for all data |
 | `default_backend` | `filesystem` | Storage backend (`filesystem` or `sqlite`) |
 | `token_budget` | `8000` | Max tokens for context injection |
-| `default_adapter` | `claude-code` | Agent adapter to use |
-| `prune_max_age_days` | `30` | Auto-prune sessions older than this |
-| `daemon_interval_seconds` | `1800` | Daemon loop interval |
-
-State is tracked separately in `~/.michi-context-v2/.state.json` (managed automatically).
+| `default_adapter` | `claude-code` | Agent adapter |
+| `prune_max_age_days` | `30` | Auto-prune age threshold |
+| `daemon_interval_seconds` | `1800` | Background learning interval |
 
 ## Data Flow
 
@@ -233,16 +200,16 @@ State is tracked separately in `~/.michi-context-v2/.state.json` (managed automa
 Claude Code session
   │
   ▼
-~/.claude/projects/{key}/*.jsonl     ← raw session logs
+~/.claude/projects/{key}/*.jsonl       ← raw JSONL session logs
   │
   ▼  [capture]
-/context/history/{project}/{sid}     ← parsed sessions (prompts, file ops, errors)
+/context/history/{project}/{sid}       ← parsed: prompts, file ops, errors
   │
   ▼  [learn]
-/context/memory/{project}/{type}/{key}  ← extracted knowledge
+/context/memory/{project}/{type}/{key} ← extracted: facts, patterns, errors
   │
   ▼  [inject]
-ContextManifest → JSON output       ← token-budgeted context for the agent
+ContextManifest → JSON hook output     ← token-budgeted context for the agent
 ```
 
 ## Project Structure
@@ -251,48 +218,49 @@ ContextManifest → JSON output       ← token-budgeted context for the agent
 michigram/
 ├── pyproject.toml
 ├── scripts/
-│   ├── install.sh              # Claude Code hook installer
-│   └── install-launchd.sh      # macOS daemon installer
-├── src/michi_context_v2/
-│   ├── cli.py                  # CLI entrypoint (11 subcommands)
-│   ├── server.py               # HTTP API server
-│   ├── bundle.py               # Export/import tar.gz bundles
+│   ├── install.sh                # Claude Code hook installer
+│   └── install-launchd.sh        # macOS daemon installer
+├── michigram/
+│   ├── cli.py                    # CLI entrypoint (11 subcommands)
+│   ├── server.py                 # HTTP API server
+│   ├── bundle.py                 # Export/import tar.gz bundles
 │   ├── core/
-│   │   ├── config.py           # Configuration loading
-│   │   ├── state.py            # Session/project state tracking
-│   │   └── primitives.py       # Atomic writes, hashing, token estimation
+│   │   ├── config.py             # Configuration loading
+│   │   ├── state.py              # Session/project state tracking
+│   │   └── primitives.py         # Atomic writes, hashing, token estimation
 │   ├── adapters/
-│   │   ├── base.py             # Abstract adapter interface
-│   │   ├── claude_code.py      # Claude Code JSONL adapter
-│   │   └── generic.py          # Generic markdown/text adapter
+│   │   ├── base.py               # Abstract adapter interface
+│   │   ├── claude_code.py        # Claude Code JSONL adapter
+│   │   └── generic.py            # Generic markdown/text adapter
 │   ├── pipeline/
-│   │   ├── constructor.py      # Context manifest builder
-│   │   ├── evaluator.py        # Session → knowledge extraction
-│   │   └── updater.py          # Incremental/adaptive context updates
+│   │   ├── constructor.py        # Context manifest builder (paper: Context Constructor)
+│   │   ├── evaluator.py          # Session analysis (paper: Context Evaluator)
+│   │   └── updater.py            # Incremental/adaptive context updates
 │   ├── repository/
-│   │   ├── history.py          # Session log storage
-│   │   ├── memory.py           # Multi-tier memory (5 types)
-│   │   └── scratchpad.py       # Temporary notes with TTL
+│   │   ├── history.py            # Session log storage
+│   │   ├── memory.py             # Five-tier memory system
+│   │   └── scratchpad.py         # Temporary notes with TTL + promotion
 │   ├── afs/
-│   │   ├── node.py             # ContextNode model + metadata
-│   │   ├── namespace.py        # Virtual filesystem with mount routing
-│   │   └── mount.py            # Mount point abstraction
+│   │   ├── node.py               # ContextNode model + metadata
+│   │   ├── namespace.py          # Virtual filesystem with mount routing
+│   │   └── mount.py              # Mount point abstraction
 │   └── storage/
-│       ├── base.py             # Storage backend interface
-│       ├── filesystem.py       # File-based storage with versioning
-│       └── sqlite.py           # SQLite-based storage
-└── tests/                      # 119 tests covering all modules
+│       ├── base.py               # Storage backend interface
+│       ├── filesystem.py         # File-based storage with versioning
+│       └── sqlite.py             # SQLite-based storage
+└── tests/                        # 119 tests
 ```
 
 ## Development
 
 ```bash
-# Install in development mode
 pip install -e .
-
-# Run tests
 python -m pytest tests/ -v
 ```
+
+## References
+
+- Xu, X., Mao, R., Bai, Q., Gu, X., Li, Y., & Zhu, L. (2025). *Everything is Context: Agentic File System Abstraction for Context Engineering*. [arXiv:2512.05470](https://arxiv.org/abs/2512.05470)
 
 ## License
 

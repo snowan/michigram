@@ -5,9 +5,9 @@ import json
 import tarfile
 from pathlib import Path
 
-from michi_context_v2.afs.namespace import Namespace
-from michi_context_v2.afs.node import ContextNode, NodeType, NodeMetadata, node_to_dict, node_from_dict
-from michi_context_v2.core.primitives import now_iso
+from michigram.afs.namespace import Namespace
+from michigram.afs.node import ContextNode, NodeType, NodeMetadata, node_to_dict, node_from_dict
+from michigram.core.primitives import now_iso
 
 
 def export_bundle(namespace: Namespace, base_path: str, output_path: Path) -> int:

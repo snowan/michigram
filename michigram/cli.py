@@ -6,16 +6,16 @@ import sys
 import time
 from pathlib import Path
 
-from michi_context_v2.afs.mount import FilesystemMount
-from michi_context_v2.afs.namespace import Namespace
-from michi_context_v2.core.config import Config, load_config, get_adapter_class
-from michi_context_v2.core.state import get_state, save_state
-from michi_context_v2.pipeline.constructor import ContextConstructor
-from michi_context_v2.pipeline.evaluator import ContextEvaluator
-from michi_context_v2.pipeline.updater import ContextUpdater, UpdateMode
-from michi_context_v2.repository.history import HistoryRepository
-from michi_context_v2.repository.memory import MemoryRepository, MemoryType
-from michi_context_v2.storage.filesystem import FilesystemBackend
+from michigram.afs.mount import FilesystemMount
+from michigram.afs.namespace import Namespace
+from michigram.core.config import Config, load_config, get_adapter_class
+from michigram.core.state import get_state, save_state
+from michigram.pipeline.constructor import ContextConstructor
+from michigram.pipeline.evaluator import ContextEvaluator
+from michigram.pipeline.updater import ContextUpdater, UpdateMode
+from michigram.repository.history import HistoryRepository
+from michigram.repository.memory import MemoryRepository, MemoryType
+from michigram.storage.filesystem import FilesystemBackend
 
 
 def _build_stack(config: Config) -> tuple[Namespace, HistoryRepository, MemoryRepository]:
@@ -222,13 +222,13 @@ def cmd_memory(args: argparse.Namespace) -> None:
 
 
 def cmd_serve(args: argparse.Namespace) -> None:
-    from michi_context_v2.server import run_server
+    from michigram.server import run_server
     config = load_config()
     run_server(host=args.host, port=args.port, config=config)
 
 
 def cmd_export(args: argparse.Namespace) -> None:
-    from michi_context_v2.bundle import export_bundle
+    from michigram.bundle import export_bundle
     config = load_config()
     ns, _, _ = _build_stack(config)
     output = Path(args.output)
@@ -237,7 +237,7 @@ def cmd_export(args: argparse.Namespace) -> None:
 
 
 def cmd_import(args: argparse.Namespace) -> None:
-    from michi_context_v2.bundle import import_bundle
+    from michigram.bundle import import_bundle
     config = load_config()
     ns, _, _ = _build_stack(config)
     bundle = Path(args.bundle)
@@ -278,8 +278,8 @@ def cmd_afs(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(prog="michi-context-v2",
-                                     description="Context engineering system v2")
+    parser = argparse.ArgumentParser(prog="michigram",
+                                     description="Context engineering system for AI agents")
     sub = parser.add_subparsers(dest="command")
 
     p_capture = sub.add_parser("capture")

@@ -1,4 +1,4 @@
-from michi_context_v2.core.state import get_state, save_state
+from michigram.core.state import get_state, save_state
 
 
 def test_get_state_default(tmp_path):

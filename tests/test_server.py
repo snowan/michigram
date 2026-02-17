@@ -2,12 +2,12 @@ import json
 import threading
 from http.client import HTTPConnection
 
-from michi_context_v2.core.config import Config
-from michi_context_v2.server import create_server
+from michigram.core.config import Config
+from michigram.server import create_server
 
 
 def _start_server(tmp_path):
-    config = Config(base_dir=tmp_path / ".michi-context-v2")
+    config = Config(base_dir=tmp_path / ".michigram")
     config.base_dir.mkdir(parents=True)
     server = create_server("127.0.0.1", 0, config)  # port 0 = random available
     port = server.server_address[1]

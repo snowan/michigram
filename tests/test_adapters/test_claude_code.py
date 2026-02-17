@@ -2,13 +2,13 @@ import json
 from pathlib import Path
 from unittest.mock import patch
 
-from michi_context_v2.afs.namespace import Namespace
-from michi_context_v2.afs.mount import FilesystemMount
-from michi_context_v2.storage.filesystem import FilesystemBackend
-from michi_context_v2.repository.history import HistoryRepository
-from michi_context_v2.repository.memory import MemoryRepository, MemoryType
-from michi_context_v2.adapters.claude_code import ClaudeCodeAdapter
-from michi_context_v2.pipeline.constructor import ContextConstructor
+from michigram.afs.namespace import Namespace
+from michigram.afs.mount import FilesystemMount
+from michigram.storage.filesystem import FilesystemBackend
+from michigram.repository.history import HistoryRepository
+from michigram.repository.memory import MemoryRepository, MemoryType
+from michigram.adapters.claude_code import ClaudeCodeAdapter
+from michigram.pipeline.constructor import ContextConstructor
 
 
 def _setup(tmp_path):
@@ -49,7 +49,7 @@ def test_format_context(tmp_path, sample_jsonl):
 
 def test_format_empty_manifest(tmp_path):
     adapter, _, _, _ = _setup(tmp_path)
-    from michi_context_v2.pipeline.constructor import ContextManifest
+    from michigram.pipeline.constructor import ContextManifest
     manifest = ContextManifest()
     output = adapter.format_context(manifest)
     parsed = json.loads(output)

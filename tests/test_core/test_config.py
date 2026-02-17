@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from michi_context_v2.core.config import Config, load_config, DEFAULT_BASE_DIR
+from michigram.core.config import Config, load_config, DEFAULT_BASE_DIR
 
 
 def test_default_config():

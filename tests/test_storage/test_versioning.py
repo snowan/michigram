@@ -1,6 +1,6 @@
-from michi_context_v2.storage.filesystem import FilesystemBackend
-from michi_context_v2.afs.node import ContextNode, NodeType, NodeMetadata
-from michi_context_v2.core.primitives import now_iso
+from michigram.storage.filesystem import FilesystemBackend
+from michigram.afs.node import ContextNode, NodeType, NodeMetadata
+from michigram.core.primitives import now_iso
 
 
 def _backend(tmp_path):

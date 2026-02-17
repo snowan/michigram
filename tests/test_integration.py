@@ -1,14 +1,14 @@
 import json
 from pathlib import Path
 
-from michi_context_v2.afs.mount import FilesystemMount
-from michi_context_v2.afs.namespace import Namespace
-from michi_context_v2.adapters.claude_code import ClaudeCodeAdapter
-from michi_context_v2.pipeline.constructor import ContextConstructor
-from michi_context_v2.pipeline.evaluator import ContextEvaluator
-from michi_context_v2.repository.history import HistoryRepository
-from michi_context_v2.repository.memory import MemoryRepository, MemoryType
-from michi_context_v2.storage.filesystem import FilesystemBackend
+from michigram.afs.mount import FilesystemMount
+from michigram.afs.namespace import Namespace
+from michigram.adapters.claude_code import ClaudeCodeAdapter
+from michigram.pipeline.constructor import ContextConstructor
+from michigram.pipeline.evaluator import ContextEvaluator
+from michigram.repository.history import HistoryRepository
+from michigram.repository.memory import MemoryRepository, MemoryType
+from michigram.storage.filesystem import FilesystemBackend
 
 
 def test_full_pipeline(tmp_path, sample_jsonl):
@@ -79,7 +79,7 @@ def test_scratchpad_to_memory(tmp_path):
     ns.mount("/context", mount)
     memory = MemoryRepository(ns)
 
-    from michi_context_v2.repository.scratchpad import ScratchpadRepository
+    from michigram.repository.scratchpad import ScratchpadRepository
     scratch = ScratchpadRepository(ns)
 
     scratch.create("task1", "finding", "Important: always use UTC timestamps")
